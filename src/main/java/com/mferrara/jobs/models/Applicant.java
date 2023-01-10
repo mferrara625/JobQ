@@ -25,6 +25,12 @@ public class Applicant {
             joinColumns = @JoinColumn(name = "applicant_id"),
             inverseJoinColumns = @JoinColumn(name = "jobPost_id"))
     private List<JobPost> jobsList;
+    @ManyToMany
+    @JoinTable(
+            name = "applicant_likedPosts",
+            joinColumns = @JoinColumn(name = "applicant_id"),
+            inverseJoinColumns = @JoinColumn(name = "applicantPost_id"))
+    private List<ApplicantPost> likedPosts;
     @OneToMany(mappedBy = "author", fetch = FetchType.LAZY)
     private List<ApplicantPost> posts;
 

@@ -14,6 +14,8 @@ public class ApplicantPost implements PostInterface {
     private Long id;
     private String title;
     private String content;
+    @ManyToMany(mappedBy = "likedPosts")
+
     private List<Applicant> applicants;  // list of applicants that have liked this post
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id", referencedColumnName = "id")
