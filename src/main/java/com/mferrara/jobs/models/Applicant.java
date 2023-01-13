@@ -37,10 +37,17 @@ public class Applicant {
     public Applicant() {
     }
 
-    public Applicant(Long id, String name, Resume resume) {
+    public Applicant(String name) {
+        this.name = name;
+    }
+
+    public Applicant(Long id, String name, Resume resume, List<JobPost> jobsList, List<ApplicantPost> likedPosts, List<ApplicantPost> posts) {
         this.id = id;
         this.name = name;
         this.resume = resume;
+        this.jobsList = jobsList;
+        this.likedPosts = likedPosts;
+        this.posts = posts;
     }
 
     public Long getId() {
