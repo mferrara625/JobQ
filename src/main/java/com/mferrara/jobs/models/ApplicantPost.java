@@ -73,6 +73,14 @@ public class ApplicantPost implements PostInterface {
         this.author = author;
     }
 
+    public Integer getNumberOfLikes() {
+        return numberOfLikes;
+    }
+
+    public void setNumberOfLikes(Integer numberOfLikes) {
+        this.numberOfLikes = numberOfLikes;
+    }
+
     @Override
     public void addApplicantToList(Applicant applicant){
         applicants.add(applicant);

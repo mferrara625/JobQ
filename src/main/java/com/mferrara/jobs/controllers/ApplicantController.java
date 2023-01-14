@@ -57,6 +57,8 @@ public class ApplicantController {
         return new ResponseEntity<>(repository.save(current), HttpStatus.ACCEPTED);
     }
 
+
+
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteApplicant(@PathVariable Long id){
         repository.deleteById(id);
