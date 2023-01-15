@@ -1,5 +1,6 @@
 package com.mferrara.jobs.models;
 
+import com.mferrara.jobs.auth.User;
 import jakarta.persistence.*;
 
 import java.io.File;
@@ -33,6 +34,13 @@ public class Applicant {
     private List<ApplicantPost> likedPosts;
     @OneToMany(mappedBy = "author", fetch = FetchType.LAZY)
     private List<ApplicantPost> posts;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinTable(name = "applicant_user",
+            joinColumns =
+                    { @JoinColumn(name = "applicant_id", referencedColumnName = "id") },
+            inverseJoinColumns =
+                    { @JoinColumn(name = "user_id", referencedColumnName = "id") })
+    private User user;
 
     public Applicant() {
     }
@@ -88,5 +96,21 @@ public class Applicant {
 
     public void setPosts(List<ApplicantPost> posts) {
         this.posts = posts;
+    }
+
+    public List<ApplicantPost> getLikedPosts() {
+        return likedPosts;
+    }
+
+    public void setLikedPosts(List<ApplicantPost> likedPosts) {
+        this.likedPosts = likedPosts;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

@@ -1,5 +1,6 @@
 package com.mferrara.jobs.models;
 
+import com.mferrara.jobs.auth.User;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -13,6 +14,13 @@ public class Employer {
     private String companyName;
     @OneToMany(mappedBy = "employer", fetch = FetchType.LAZY)
     private List<JobPost> jobListings;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinTable(name = "employer_user",
+            joinColumns =
+                    { @JoinColumn(name = "employer_id", referencedColumnName = "id") },
+            inverseJoinColumns =
+                    { @JoinColumn(name = "user_id", referencedColumnName = "id") })
+    private User user;
 
     public Employer() {
     }
@@ -48,5 +56,13 @@ public class Employer {
 
     public void addJobListing(JobPost job){
         jobListings.add(job);
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

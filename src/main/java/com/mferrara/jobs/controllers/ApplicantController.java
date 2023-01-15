@@ -1,11 +1,16 @@
 package com.mferrara.jobs.controllers;
 
+import com.mferrara.jobs.auth.User;
 import com.mferrara.jobs.models.Applicant;
 import com.mferrara.jobs.repositories.ApplicantRepository;
+import com.mferrara.jobs.repositories.UserRepository;
+import com.mferrara.jobs.security.services.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -19,9 +24,18 @@ public class ApplicantController {
     @Autowired
     private ApplicantRepository repository;
 
+    @Autowired
+    private UserRepository userRepository;
+
 
     @PostMapping("/")
     public ResponseEntity<Applicant> createApplicant(@RequestBody Applicant newApplicant) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+
+        User currentUser = userRepository.findById(userDetails.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        newApplicant.setUser(currentUser);
         return new ResponseEntity<>(repository.save(newApplicant), HttpStatus.CREATED);
     }
 
@@ -52,6 +66,14 @@ public class ApplicantController {
 
         if(update.getResume() != null){
             current.setResume(update.getResume());
+        }
+
+        if(update.getLikedPosts() != null){
+            current.setLikedPosts(update.getLikedPosts());
+        }
+
+        if(update.getUser() != null){
+            current.setUser(update.getUser());
         }
 
         return new ResponseEntity<>(repository.save(current), HttpStatus.ACCEPTED);

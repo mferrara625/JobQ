@@ -1,6 +1,7 @@
 package com.mferrara.jobs.repositories;
 
 import com.mferrara.jobs.auth.User;
+import com.mferrara.jobs.models.Applicant;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

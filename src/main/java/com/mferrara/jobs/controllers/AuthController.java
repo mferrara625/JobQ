@@ -3,10 +3,12 @@ package com.mferrara.jobs.controllers;
 import com.mferrara.jobs.auth.ERole;
 import com.mferrara.jobs.auth.Role;
 import com.mferrara.jobs.auth.User;
+import com.mferrara.jobs.models.Applicant;
 import com.mferrara.jobs.payloads.requests.LoginRequest;
 import com.mferrara.jobs.payloads.requests.SignupRequest;
 import com.mferrara.jobs.payloads.response.JwtResponse;
 import com.mferrara.jobs.payloads.response.MessageResponse;
+import com.mferrara.jobs.repositories.ApplicantRepository;
 import com.mferrara.jobs.repositories.RoleRepository;
 import com.mferrara.jobs.repositories.UserRepository;
 import com.mferrara.jobs.security.JwtUtils;
@@ -38,6 +40,9 @@ public class AuthController {
 
     @Autowired
     private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private ApplicantRepository applicantRepository;
 
     @Autowired
     private PasswordEncoder encoder;
@@ -121,10 +126,14 @@ public class AuthController {
     }
 
     @GetMapping("/test/{username}")
-    ResponseEntity<Optional> testUser(@PathVariable String username){
+    public ResponseEntity<Optional> testUser(@PathVariable String username){
         return new ResponseEntity<>(repository.findUserByName(username), HttpStatus.OK);
 
 
+    }
+    @GetMapping("/findApplicant/{username}")
+    public ResponseEntity<Applicant> findApplicant(@PathVariable String username){
+        return new ResponseEntity<>(applicantRepository.findApplicantByUser_Username(username), HttpStatus.OK);
     }
 }
 

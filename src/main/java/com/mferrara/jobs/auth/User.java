@@ -1,6 +1,8 @@
 package com.mferrara.jobs.auth;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.mferrara.jobs.models.Applicant;
+import com.mferrara.jobs.models.Employer;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -37,6 +39,12 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private Set<Role> roles = new HashSet<>();
+    @JsonIgnore
+    @OneToOne(mappedBy = "user")
+    private Applicant applicant;
+    @JsonIgnore
+    @OneToOne(mappedBy = "user")
+    private Employer employer;
 
 
     public User() {
@@ -79,4 +87,19 @@ public class User {
         this.roles = roles;
     }
 
+    public Applicant getApplicant() {
+        return applicant;
+    }
+
+    public void setApplicant(Applicant applicant) {
+        this.applicant = applicant;
+    }
+
+    public Employer getEmployer() {
+        return employer;
+    }
+
+    public void setEmployer(Employer employer) {
+        this.employer = employer;
+    }
 }
