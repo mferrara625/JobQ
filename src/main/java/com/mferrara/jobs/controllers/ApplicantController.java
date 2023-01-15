@@ -44,6 +44,11 @@ public class ApplicantController {
         return new ResponseEntity<>(repository.findAll(), HttpStatus.OK);
     }
 
+    @GetMapping("/findApplicant/{username}")
+    public ResponseEntity<Applicant> findApplicant(@PathVariable String username){
+        return new ResponseEntity<>(repository.findApplicantByUser_Username(username), HttpStatus.OK);
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<Applicant> updateApplicant(@PathVariable Long id, @RequestBody Applicant update){
         Applicant current = repository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
