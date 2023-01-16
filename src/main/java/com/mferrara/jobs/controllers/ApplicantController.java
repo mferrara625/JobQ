@@ -1,8 +1,11 @@
 package com.mferrara.jobs.controllers;
 
+import com.mferrara.jobs.auth.ERole;
+import com.mferrara.jobs.auth.Role;
 import com.mferrara.jobs.auth.User;
 import com.mferrara.jobs.models.Applicant;
 import com.mferrara.jobs.repositories.ApplicantRepository;
+import com.mferrara.jobs.repositories.RoleRepository;
 import com.mferrara.jobs.repositories.UserRepository;
 import com.mferrara.jobs.security.services.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @Secured({"ROLE_CUSTOMER","ROLE_ADMIN"})
@@ -27,6 +31,9 @@ public class ApplicantController {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private RoleRepository roleRepository;
+
 
     @PostMapping("/")
     public ResponseEntity<Applicant> createApplicant(@RequestBody Applicant newApplicant) {
@@ -34,7 +41,11 @@ public class ApplicantController {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
         User currentUser = userRepository.findById(userDetails.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-
+        Set<Role> roles = currentUser.getRoles();
+        Role applicantRole = roleRepository.findByName(ERole.ROLE_APPLICANT)
+                .orElseThrow(() -> new RuntimeException("Error: Role is not found"));
+        roles.add(applicantRole);
+        currentUser.setRoles(roles);
         newApplicant.setUser(currentUser);
         return new ResponseEntity<>(repository.save(newApplicant), HttpStatus.CREATED);
     }

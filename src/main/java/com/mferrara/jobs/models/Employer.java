@@ -3,7 +3,7 @@ package com.mferrara.jobs.models;
 import com.mferrara.jobs.auth.User;
 import jakarta.persistence.*;
 
-import java.util.List;
+import java.util.Set;
 
 @Entity
 public class Employer {
@@ -13,7 +13,7 @@ public class Employer {
     private Long id;
     private String companyName;
     @OneToMany(mappedBy = "employer", fetch = FetchType.LAZY)
-    private List<JobPost> jobListings;
+    private Set<JobPost> jobListings;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinTable(name = "employer_user",
             joinColumns =
@@ -46,11 +46,11 @@ public class Employer {
         this.companyName = companyName;
     }
 
-    public List<JobPost> getJobListings() {
+    public Set<JobPost> getJobListings() {
         return jobListings;
     }
 
-    public void setJobListings(List<JobPost> jobListings) {
+    public void setJobListings(Set<JobPost> jobListings) {
         this.jobListings = jobListings;
     }
 

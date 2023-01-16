@@ -1,10 +1,9 @@
 package com.mferrara.jobs.models;
 
 import com.fasterxml.jackson.annotation.JsonIncludeProperties;
-import com.mferrara.jobs.auth.User;
 import jakarta.persistence.*;
 
-import java.util.List;
+import java.util.Set;
 
 @Entity
 public class ApplicantPost implements PostInterface {
@@ -16,7 +15,7 @@ public class ApplicantPost implements PostInterface {
     private String content;
     @ManyToMany(mappedBy = "likedPosts")
 
-    private List<Applicant> applicants;  // list of applicants that have liked this post
+    private Set<Applicant> applicants;  // list of applicants that have liked this post
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id", referencedColumnName = "id")
     @JsonIncludeProperties("id")
@@ -57,11 +56,11 @@ public class ApplicantPost implements PostInterface {
         this.content = content;
     }
 
-    public List<Applicant> getApplicants() {
+    public Set<Applicant> getApplicants() {
         return applicants;
     }
 
-    public void setApplicants(List<Applicant> applicants) {
+    public void setApplicants(Set<Applicant> applicants) {
         this.applicants = applicants;
     }
 

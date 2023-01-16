@@ -1,10 +1,10 @@
 package com.mferrara.jobs.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mferrara.jobs.auth.User;
 import jakarta.persistence.*;
 
-import java.io.File;
-import java.util.List;
+import java.util.Set;
 
 @Entity
 public class Applicant {
@@ -25,15 +25,16 @@ public class Applicant {
             name = "applicant_jobs",
             joinColumns = @JoinColumn(name = "applicant_id"),
             inverseJoinColumns = @JoinColumn(name = "jobPost_id"))
-    private List<JobPost> jobsList;
+    @JsonIgnore
+    private Set<JobPost> jobsList;
     @ManyToMany
     @JoinTable(
             name = "applicant_likedPosts",
             joinColumns = @JoinColumn(name = "applicant_id"),
             inverseJoinColumns = @JoinColumn(name = "applicantPost_id"))
-    private List<ApplicantPost> likedPosts;
+    private Set<ApplicantPost> likedPosts;
     @OneToMany(mappedBy = "author", fetch = FetchType.LAZY)
-    private List<ApplicantPost> posts;
+    private Set<ApplicantPost> posts;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinTable(name = "applicant_user",
             joinColumns =
@@ -49,7 +50,7 @@ public class Applicant {
         this.name = name;
     }
 
-    public Applicant(Long id, String name, Resume resume, List<JobPost> jobsList, List<ApplicantPost> likedPosts, List<ApplicantPost> posts) {
+    public Applicant(Long id, String name, Resume resume, Set<JobPost> jobsList, Set<ApplicantPost> likedPosts, Set<ApplicantPost> posts) {
         this.id = id;
         this.name = name;
         this.resume = resume;
@@ -82,27 +83,27 @@ public class Applicant {
         this.resume = resume;
     }
 
-    public List<JobPost> getJobsList() {
+    public Set<JobPost> getJobsList() {
         return jobsList;
     }
 
-    public void setJobsList(List<JobPost> jobsList) {
+    public void setJobsList(Set<JobPost> jobsList) {
         this.jobsList = jobsList;
     }
 
-    public List<ApplicantPost> getPosts() {
+    public Set<ApplicantPost> getPosts() {
         return posts;
     }
 
-    public void setPosts(List<ApplicantPost> posts) {
+    public void setPosts(Set<ApplicantPost> posts) {
         this.posts = posts;
     }
 
-    public List<ApplicantPost> getLikedPosts() {
+    public Set<ApplicantPost> getLikedPosts() {
         return likedPosts;
     }
 
-    public void setLikedPosts(List<ApplicantPost> likedPosts) {
+    public void setLikedPosts(Set<ApplicantPost> likedPosts) {
         this.likedPosts = likedPosts;
     }
 

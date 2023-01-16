@@ -1,8 +1,9 @@
 package com.mferrara.jobs.controllers;
 
 import com.mferrara.jobs.auth.User;
-import com.mferrara.jobs.models.Content;
+import com.mferrara.jobs.models.Applicant;
 import com.mferrara.jobs.models.JobPost;
+import com.mferrara.jobs.repositories.ApplicantRepository;
 import com.mferrara.jobs.repositories.EmployerRepository;
 import com.mferrara.jobs.repositories.JobPostRepository;
 import com.mferrara.jobs.repositories.UserRepository;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @Secured({"ROLE_CUSTOMER","ROLE_ADMIN"})
@@ -31,6 +33,9 @@ public class JobPostController {
 
     @Autowired
     private EmployerRepository employerRepository;
+
+    @Autowired
+    private ApplicantRepository applicantRepository;
 
 
     @Secured({"ROLE_EMPLOYER", "ROLE_ADMIN"})
@@ -52,8 +57,12 @@ public class JobPostController {
 
     @GetMapping("/search/{keyword}")
     public @ResponseBody ResponseEntity<List<JobPost>> searchContentText(@PathVariable String keyword){
-        System.out.println(keyword);
         return new ResponseEntity<>(repository.findByContentLike(keyword), HttpStatus.OK);
+    }
+
+    @GetMapping("/searchByCompany/{companyName}")
+    public @ResponseBody ResponseEntity<List<JobPost>> searchJobListingByCompany(@PathVariable String companyName){
+        return new ResponseEntity<>(repository.findAllJobPostsByEmployer_CompanyName(companyName), HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
@@ -81,6 +90,26 @@ public class JobPostController {
         }
 
         return new ResponseEntity<>(repository.save(current), HttpStatus.ACCEPTED);
+    }
+
+    @PutMapping("/apply/{jobId}")
+    public ResponseEntity<String> applyForJob(@PathVariable Long jobId){
+
+        JobPost current = repository.findById(jobId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+
+        User currentUser = userRepository.findById(userDetails.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        Applicant currentApplicant = applicantRepository.findApplicantByUser(currentUser);
+        Set<JobPost> jobs = currentApplicant.getJobsList();
+        jobs.add(current);
+        currentApplicant.setJobsList(jobs);
+        applicantRepository.save(currentApplicant);
+
+
+        return new ResponseEntity<>("Application Submitted!", HttpStatus.OK);
     }
 
 
