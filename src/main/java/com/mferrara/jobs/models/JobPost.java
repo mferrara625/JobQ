@@ -8,6 +8,7 @@ import java.util.Set;
 @Entity
 public class JobPost implements PostInterface {
 
+//    TODO: ADD LOCATION FIELD
     @Id
     @GeneratedValue
     private Long id;

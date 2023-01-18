@@ -20,6 +20,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 import java.util.Set;
 
+@CrossOrigin
 @RestController
 @Secured({"ROLE_CUSTOMER","ROLE_ADMIN"})
 @RequestMapping("/JobPost")

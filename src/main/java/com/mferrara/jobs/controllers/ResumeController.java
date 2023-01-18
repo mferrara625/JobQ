@@ -11,6 +11,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
+@CrossOrigin
 @RestController
 @Secured({"ROLE_CUSTOMER","ROLE_ADMIN"})
 @RequestMapping("/Resume")
