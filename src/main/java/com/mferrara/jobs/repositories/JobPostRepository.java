@@ -10,6 +10,7 @@ import java.util.List;
 
 public interface JobPostRepository extends JpaRepository<JobPost, Long> {
     List<JobPost> findAllJobPostsByEmployer_CompanyName(String companyName);
+    List<JobPost> findAllJobPostsByEmployer_User_Id(Long userId);
 
     @Query("SELECT j FROM JobPost j WHERE j.content LIKE %?1%")
     List<JobPost> findByContentLike(String content);

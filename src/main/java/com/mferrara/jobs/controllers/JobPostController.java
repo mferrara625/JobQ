@@ -17,7 +17,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 @CrossOrigin
@@ -64,6 +66,21 @@ public class JobPostController {
     @GetMapping("/searchByCompany/{companyName}")
     public @ResponseBody ResponseEntity<List<JobPost>> searchJobListingByCompany(@PathVariable String companyName){
         return new ResponseEntity<>(repository.findAllJobPostsByEmployer_CompanyName(companyName), HttpStatus.OK);
+    }
+
+
+    @GetMapping("/viewYourCurrentListings/{id}")
+    public @ResponseBody ResponseEntity<List<JobPost>> searchJobListingByEmployerUserId(@PathVariable Long id){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+
+        User currentUser = userRepository.findById(userDetails.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        if(Objects.equals(currentUser.getId(), id))
+        return new ResponseEntity<>(repository.findAllJobPostsByEmployer_User_Id(id), HttpStatus.OK);
+
+        List<JobPost> emptyList = new ArrayList<>();
+
+        return new ResponseEntity<>(emptyList, HttpStatus.NOT_FOUND);
     }
 
     @PutMapping("/{id}")
