@@ -1,11 +1,6 @@
 package com.mferrara.jobs.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
-
-import java.io.File;
+import jakarta.persistence.*;
 
 @Entity
 public class Resume {
@@ -13,16 +8,16 @@ public class Resume {
     @Id
     @GeneratedValue
     private Long id;
-    private File resume;
+    private String resumeLink;
     @OneToOne(mappedBy = "resume")
     private Applicant applicant;
 
     public Resume() {
     }
 
-    public Resume(Long id, File resume, Applicant applicant) {
+    public Resume(Long id, String resumeLink, Applicant applicant) {
         this.id = id;
-        this.resume = resume;
+        this.resumeLink = resumeLink;
         this.applicant = applicant;
     }
 
@@ -34,12 +29,12 @@ public class Resume {
         this.id = id;
     }
 
-    public File getResume() {
-        return resume;
+    public String getResumeLink() {
+        return resumeLink;
     }
 
-    public void setResume(File resume) {
-        this.resume = resume;
+    public void setResumeLink(String resumeLink) {
+        this.resumeLink = resumeLink;
     }
 
     public Applicant getApplicant() {

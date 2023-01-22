@@ -19,6 +19,7 @@ public class Applicant {
                     { @JoinColumn(name = "applicant_id", referencedColumnName = "id") },
             inverseJoinColumns =
                     { @JoinColumn(name = "resume_id", referencedColumnName = "id") })
+    @JsonIgnore
     private Resume resume;
     @ManyToMany
     @JoinTable(
