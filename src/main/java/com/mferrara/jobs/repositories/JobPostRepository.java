@@ -1,7 +1,5 @@
 package com.mferrara.jobs.repositories;
 
-import com.mferrara.jobs.models.Content;
-import com.mferrara.jobs.models.Employer;
 import com.mferrara.jobs.models.JobPost;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

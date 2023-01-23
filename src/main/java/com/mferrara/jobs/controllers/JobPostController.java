@@ -1,12 +1,10 @@
 package com.mferrara.jobs.controllers;
 
+import com.mferrara.jobs.auth.ERole;
 import com.mferrara.jobs.auth.User;
 import com.mferrara.jobs.models.Applicant;
 import com.mferrara.jobs.models.JobPost;
-import com.mferrara.jobs.repositories.ApplicantRepository;
-import com.mferrara.jobs.repositories.EmployerRepository;
-import com.mferrara.jobs.repositories.JobPostRepository;
-import com.mferrara.jobs.repositories.UserRepository;
+import com.mferrara.jobs.repositories.*;
 import com.mferrara.jobs.security.services.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,10 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @CrossOrigin
 @RestController
@@ -39,6 +34,9 @@ public class JobPostController {
 
     @Autowired
     private ApplicantRepository applicantRepository;
+
+    @Autowired
+    private RoleRepository roleRepository;
 
 
     @Secured({"ROLE_EMPLOYER", "ROLE_ADMIN"})
@@ -134,7 +132,24 @@ public class JobPostController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteJobPost(@PathVariable Long id){
-        repository.deleteById(id);
-        return new ResponseEntity<>("Job Post Deleted", HttpStatus.GONE);
+        JobPost current = repository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+
+        User currentUser = userRepository.findById(userDetails.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        if(current.getEmployer() == employerRepository.findEmployerByUser(currentUser) || currentUser.getRoles().contains(roleRepository.findByName(ERole.ROLE_ADMIN).orElseThrow(() -> new RuntimeException("Error: Role is not found")))) {
+            for(Applicant a : current.getApplicants()) {
+                a.getJobsList().remove(current);
+                applicantRepository.save(a);
+            }
+            Set<Applicant> emptySet = new HashSet<>();
+            current.setApplicants(emptySet);
+            repository.save(current);
+            repository.deleteById(id);
+        }
+
+        return new ResponseEntity<>("Job Post Deleted", HttpStatus.OK);
     }
 }
