@@ -51,7 +51,7 @@ public class JobPostController {
         return new ResponseEntity<>(repository.save(newJobPost), HttpStatus.CREATED);
     }
 
-    @GetMapping("/")
+    @GetMapping({"/", "/search/"})
     public ResponseEntity<List<JobPost>> getAllJobPosts(){
         return new ResponseEntity<>(repository.findAll(), HttpStatus.OK);
     }
@@ -75,6 +75,20 @@ public class JobPostController {
         User currentUser = userRepository.findById(userDetails.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         if(Objects.equals(currentUser.getId(), id))
         return new ResponseEntity<>(repository.findAllJobPostsByEmployer_User_Id(id), HttpStatus.OK);
+
+        List<JobPost> emptyList = new ArrayList<>();
+
+        return new ResponseEntity<>(emptyList, HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping("/viewYourAppliedJobs/{id}")
+    public @ResponseBody ResponseEntity<List<JobPost>> searchJobListingByApplicantUserId(@PathVariable Long id){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+
+        User currentUser = userRepository.findById(userDetails.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        if(Objects.equals(currentUser.getId(), id))
+            return new ResponseEntity<>(repository.findAllJobPostsByApplicants_User_Id(id), HttpStatus.OK);
 
         List<JobPost> emptyList = new ArrayList<>();
 
