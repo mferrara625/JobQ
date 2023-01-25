@@ -58,7 +58,11 @@ public class JobPostController {
 
     @GetMapping("/search/{keyword}")
     public @ResponseBody ResponseEntity<List<JobPost>> searchContentText(@PathVariable String keyword){
-        return new ResponseEntity<>(repository.findByContentLike(keyword), HttpStatus.OK);
+        Set<JobPost> results = new HashSet<>();
+        results.addAll(repository.findByContentLike(keyword));
+        results.addAll(repository.findByLocationLike(keyword));
+        List<JobPost> result = new ArrayList<>(results);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @GetMapping("/searchByCompany/{companyName}")
@@ -109,6 +113,10 @@ public class JobPostController {
 
         if(update.getContent() != null){
             current.setContent(update.getContent());
+        }
+
+        if(update.getLocation() != null){
+            current.setLocation(update.getLocation());
         }
 
         if(update.getApplicants() != null){

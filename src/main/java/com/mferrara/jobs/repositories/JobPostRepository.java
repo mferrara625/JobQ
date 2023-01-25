@@ -14,4 +14,7 @@ public interface JobPostRepository extends JpaRepository<JobPost, Long> {
 
     @Query("SELECT j FROM JobPost j WHERE j.content LIKE %?1%")
     List<JobPost> findByContentLike(String content);
+
+    @Query("SELECT j FROM JobPost j WHERE j.location LIKE %?1%")
+    List<JobPost> findByLocationLike(String location);
 }

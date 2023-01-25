@@ -14,6 +14,7 @@ public class JobPost implements PostInterface {
     private Long id;
     private String title;
     private String content;
+    private String location;
     @ManyToMany(mappedBy = "jobsList")
     private Set<Applicant> applicants;  // list of Applicants that have applied to this job
     @ManyToOne(fetch = FetchType.LAZY)
@@ -24,10 +25,11 @@ public class JobPost implements PostInterface {
     public JobPost() {
     }
 
-    public JobPost(Long id, String title, String content, Employer employer) {
+    public JobPost(Long id, String title, String content, String location, Employer employer) {
         this.id = id;
         this.title = title;
         this.content = content;
+        this.location = location;
         this.employer = employer;
     }
 
@@ -53,6 +55,14 @@ public class JobPost implements PostInterface {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 
     public Set<Applicant> getApplicants() {
