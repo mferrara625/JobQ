@@ -56,6 +56,12 @@ public class JobPostController {
         return new ResponseEntity<>(repository.findAll(), HttpStatus.OK);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<JobPost> getJobPostById(@PathVariable Long id){
+        JobPost result = repository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
     @GetMapping("/search/{keyword}")
     public @ResponseBody ResponseEntity<List<JobPost>> searchContentText(@PathVariable String keyword){
         Set<JobPost> results = new HashSet<>();
@@ -103,28 +109,32 @@ public class JobPostController {
     public ResponseEntity<JobPost> updateJobPost(@PathVariable Long id, @RequestBody JobPost update){
         JobPost current = repository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
-        if(update.getId() != null){
-            current.setId(update.getId());
-        }
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
-        if(update.getTitle() != null){
-            current.setTitle(update.getTitle());
-        }
+        User currentUser = userRepository.findById(userDetails.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
-        if(update.getContent() != null){
-            current.setContent(update.getContent());
-        }
+        if(current.getEmployer() == employerRepository.findEmployerByUser(currentUser)) {
 
-        if(update.getLocation() != null){
-            current.setLocation(update.getLocation());
-        }
+            if (update.getTitle() != null) {
+                current.setTitle(update.getTitle());
+            }
 
-        if(update.getApplicants() != null){
-            current.setApplicants(update.getApplicants());
-        }
+            if (update.getContent() != null) {
+                current.setContent(update.getContent());
+            }
 
-        if(update.getEmployer() != null){
-            current.setEmployer(update.getEmployer());
+            if (update.getLocation() != null) {
+                current.setLocation(update.getLocation());
+            }
+
+            if (update.getApplicants() != null) {
+                current.setApplicants(update.getApplicants());
+            }
+
+            if (update.getEmployer() != null) {
+                current.setEmployer(update.getEmployer());
+            }
         }
 
         return new ResponseEntity<>(repository.save(current), HttpStatus.ACCEPTED);
